@@ -14,10 +14,12 @@ Source: the official Electron security checklist (20 recommendations) and the pr
 ## 1. Non-negotiable project rules
 
 1. **No comments in code**, tests included. No `//`, `/* */`, banners, TODOs, directive comments for tools unless the tool offers no configuration alternative (then a single directive line with no prose).
-2. **The token and any credential never reach the renderer.** The main process owns it (encrypted with `safeStorage`). The preload API contains no token, credential, auth or generic IPC function. A test pins the exact list of exposed keys.
-3. TypeScript strict; Electron APIs are injected into pure functions so main-process logic is unit tested with Jest.
-4. Renderer code reuses `@notes/shared`; never duplicate editor or API code in `desktop`.
-5. Tailwind only in the renderer; no styling outside Tailwind.
+2. **One responsibility per file.** Never combine a class with an interface, a type with a class, or an interface with a type in the same file. Each file exports exactly one primary entity (a component, a utility, a type, an interface, a class, or an enum). Organize related code into separate files.
+3. **Path alias `@` for all imports.** Use `@/` for any import from the project root; never relative paths like `../../../`. Configure `tsconfig.json` with `"baseUrl": "." and "@": ["src/*"]` if not already present. This keeps imports clean and stable during refactors.
+4. **The token and any credential never reach the renderer.** The main process owns it (encrypted with `safeStorage`). The preload API contains no token, credential, auth or generic IPC function. A test pins the exact list of exposed keys.
+5. TypeScript strict; Electron APIs are injected into pure functions so main-process logic is unit tested with Jest.
+6. Renderer code reuses `@notes/shared`; never duplicate editor or API code in `desktop`.
+7. Tailwind only in the renderer; no styling outside Tailwind.
 
 ## 2. Process model
 
@@ -151,6 +153,8 @@ ipcMain.handle(IPC.openExternal, async (event, url: unknown) => {
 
 ## Review checklist
 
+- [ ] Each file has one responsibility; no class + interface, type + class, or interface + type in the same file.
+- [ ] All imports use `@/` path alias; no relative paths; `tsconfig.json` configured.
 - [ ] `contextIsolation`, `sandbox`, `webSecurity` on; `nodeIntegration` off; no insecure flags.
 - [ ] Navigation, new windows and `openExternal` are restricted and validated with `URL`.
 - [ ] Every IPC handler validates sender and arguments; the preload exposes only named methods.

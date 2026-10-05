@@ -16,7 +16,7 @@ Sources: Laravel 12 docs (Eloquent, Eloquent relationships, validation, authoriz
 1. **No comments in code.** No `//`, `#`, `/* */`, no banners, no commented-out code, no TODO. Names, types and tests carry the meaning. The only docblocks allowed are type-only PHPDoc that PHPStan needs (`@param list<int> $ids`, `@return HasMany<Note, $this>`, array shapes), with no prose. Generated stubs from `artisan make:*` must have their comments deleted.
 2. **`declare(strict_types=1);` in every PHP file** of the Laravel project: `app/`, `bootstrap/`, `config/`, `database/` (migrations, factories, seeders), `routes/`, `tests/`, `public/index.php`. It is the first statement after `<?php`, separated by a blank line. Enforced by Pint (`declare_strict_types`) and by a test that scans all project PHP files.
 3. **PHPStan with the maximum strictness**: Larastan, `level: max`, strict-rules and deprecation-rules extensions, no baseline, no `ignoreErrors`, no `@phpstan-ignore`. Fix the type, not the report.
-4. **Action pattern, no services.** Business logic lives in `app/Actions/<Domain>/<VerbNoun>Action.php`: `final readonly class`, one public method `handle()`, constructor injection. There is no `app/Services` directory.
+4. **Action pattern for database persistence only.** Business logic that persists data (create, update, delete) lives in `app/Actions/<Domain>/<VerbNoun>Action.php`: `final readonly class`, one public method `handle()`, constructor injection. Read-only queries, filtering, and orchestration logic lives in controllers or query builders. There is no `app/Services` directory.
 5. **Lazy loading is forbidden everywhere.** It is prevented globally in `AppServiceProvider` for the `local` and `testing` environments (section 5), and every relationship that is used must be eager loaded.
 6. **100% test coverage** of `app/` with Pest, no coverage ignores.
 7. **Every endpoint is documented** with OpenAPI attributes (L5-Swagger) and covered by the spec parity test.
@@ -106,8 +106,8 @@ app/
   OpenApi/{Schemas,Responses}/  attributes only
 ```
 
-- **Controller**: authorize, call one action, return a resource. No query building, no business conditions, no `DB::`, no `Storage::`.
-- **Action**: owns the use case and its transaction (`DB::transaction()`), receives primitives, models or DTOs, never a `Request`. Actions may call other actions. Inject contracts and managers (`FilesystemManager`, `Hasher`, `Dispatcher`, `ConnectionInterface`) instead of using facades.
+- **Controller**: authorize, call actions for persistence, return resources. No query building, no business conditions, no `DB::`, no `Storage::`.
+- **Action**: owns a database persistence use case (create, update, delete) and its transaction (`DB::transaction()`), receives primitives, models or DTOs, never a `Request`. Actions may call other actions. Inject contracts and managers (`FilesystemManager`, `Hasher`, `Dispatcher`, `ConnectionInterface`) instead of using facades. Read-only operations stay in the query builder or controller.
 - **Model**: relations, casts (`casts()` method), scopes, accessors. No business logic, no HTTP.
 - **FormRequest**: `rules()`, `prepareForValidation()`, `after()`; always use `validated()`/`safe()`, never `all()` or `input()` for writes. `authorize()` returns `true` only when authorization happens in a policy call in the controller; otherwise authorize there.
 - **Command, job, listener**: orchestration only; delegate to an action.
@@ -232,7 +232,7 @@ it('fails when a relationship is lazy loaded', function (): void {
 
 - [ ] `declare(strict_types=1);` present; zero comments; only type-only docblocks.
 - [ ] PHPStan max and Pint pass with no ignores and no baseline.
-- [ ] Logic is in a `final readonly` Action with a single `handle()`; controller is thin.
+- [ ] Persistence logic is in a `final readonly` Action with a single `handle()`; read queries stay in controller or query builder; controller is thin.
 - [ ] FormRequest, policy (404 for foreign), resource, route model binding used.
 - [ ] No lazy loading: relations eager loaded; the AppServiceProvider guard is intact.
 - [ ] Transaction around multi-write logic; jobs dispatched after commit.

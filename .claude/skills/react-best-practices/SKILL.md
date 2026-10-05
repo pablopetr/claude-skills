@@ -14,12 +14,14 @@ Sources: react.dev ("You might not need an effect") and the Next.js docs (Server
 ## 1. Non-negotiable project rules
 
 1. **No comments in code**, tests included. No `//`, `/* */`, JSX comments, banners, TODOs, `eslint-disable`, `@ts-ignore`, `@ts-expect-error` or coverage ignores. Express intent with names, types, small components and tests. `'use client'` and `'server-only'` are directives, not comments.
-2. **TypeScript strict**, no `any`, no non-null assertions in production code, no type assertions that hide errors (`as` only at validated boundaries). Use discriminated unions, `satisfies`, `readonly`, and types generated from the OpenAPI spec.
-3. **Tailwind only** for styles, with semantic tokens (`bg-surface`, `text-text`, `border-border`). No CSS modules, no CSS-in-JS, no inline `style` except runtime values (for example an image width). Conditional classes through `cn()`.
-4. **Icons from `lucide-react` only**, every icon-only button has `aria-label` and a `title`.
-5. **The auth token is never readable by JavaScript.** Components call relative `/api/v1/...`; no token in state, props, storage, URL or logs.
-6. **Shared code lives in `packages/shared`.** Never copy a component or hook between `web` and `desktop`.
-7. ESLint (typescript-eslint strict, react-hooks, jsx-a11y, next) and `tsc --noEmit` are clean. Tests are Jest + Testing Library.
+2. **One responsibility per file.** Never combine a class with an interface, a type with a class, or an interface with a type in the same file. Each file exports exactly one primary entity (a component, a hook, a type, an interface, a class, or an enum). Organize related code into separate files.
+3. **Path alias `@` for all imports.** Use `@/` for any import from the project root; never relative paths like `../../../`. Configure `tsconfig.json` and `jsconfig.json` with `"baseUrl": "." and "@": ["src/*"]` if not already present. This keeps imports clean and stable during refactors.
+4. **TypeScript strict**, no `any`, no non-null assertions in production code, no type assertions that hide errors (`as` only at validated boundaries). Use discriminated unions, `satisfies`, `readonly`, and types generated from the OpenAPI spec.
+5. **Tailwind only** for styles, with semantic tokens (`bg-surface`, `text-text`, `border-border`). No CSS modules, no CSS-in-JS, no inline `style` except runtime values (for example an image width). Conditional classes through `cn()`.
+6. **Icons from `lucide-react` only**, every icon-only button has `aria-label` and a `title`.
+7. **The auth token is never readable by JavaScript.** Components call relative `/api/v1/...`; no token in state, props, storage, URL or logs.
+8. **Shared code lives in `packages/shared`.** Never copy a component or hook between `web` and `desktop`.
+9. ESLint (typescript-eslint strict, react-hooks, jsx-a11y, next) and `tsc --noEmit` are clean. Tests are Jest + Testing Library.
 
 ## 2. Component design
 
@@ -159,6 +161,8 @@ export const config = {
 
 ## Review checklist
 
+- [ ] Each file has one responsibility; no class + interface, type + class, or interface + type in the same file.
+- [ ] All imports use `@/` path alias; no relative paths; `tsconfig.json` configured.
 - [ ] Server component by default; `'use client'` only on interactive leaves; `server-only` on secret modules.
 - [ ] No unnecessary effects; derived values computed in render; `key` used to reset state.
 - [ ] Types strict, no `any`, no assertions hiding errors; generated API types used.
