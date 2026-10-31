@@ -1,8 +1,14 @@
 export function parseArgs(argv) {
   const [command, ...rest] = argv;
   const options = {};
+  const positional = [];
 
   for (let index = 0; index < rest.length; index += 1) {
+    if (!rest[index].startsWith('-') && !rest[index].includes('=')) {
+      positional.push(rest[index]);
+      continue;
+    }
+
     const token = rest[index].replace(/^--?/, '');
     const separator = token.indexOf('=');
 
@@ -22,5 +28,5 @@ export function parseArgs(argv) {
     }
   }
 
-  return { command, options };
+  return { command, options, positional };
 }

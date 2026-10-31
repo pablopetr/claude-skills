@@ -2,6 +2,7 @@ const text = `claude-skills - install Claude Code skills into a project
 
 Usage:
   claude-skills install                                   Prompts for the project path, installs all skills
+  claude-skills install <name> [name...]                  Installs only the named skills (e.g. caveman)
   claude-skills install skills=a,b --path=<dir>           Installs only the listed skills
   claude-skills install except=a,b --path=<dir>           Installs all skills except the listed ones
   claude-skills update [--path=<dir>]                     Refreshes installed skills from claude-skills (defaults to current dir)

@@ -36,12 +36,15 @@ Copies skills into `<project>/.claude/skills/`.
 
 ```bash
 claude-skills install
+claude-skills install caveman
+claude-skills install best-practices git-practices
 claude-skills install skills=best-practices,cypress-tests,e2e-tests --path=~/documents/code/my-project
 claude-skills install except=best-practices --path=~/documents/code/my-project
 ```
 
 - Without `--path`, the CLI asks for the project path.
-- Without `skills` or `except`, all skills are installed.
+- Skill names given directly (`install caveman`) install only those skills; same as `skills=`.
+- Without names, `skills` or `except`, all skills are installed.
 - `skills` and `except` cannot be used together.
 - Skills that already exist in the project are skipped. Add `--force` to overwrite them.
 
@@ -97,6 +100,7 @@ Both `skills=a,b` and `--skills=a,b` are accepted, as is `--path <dir>`. Quote p
 | `e2e-tests` | End-to-end testing strategy and edge-case coverage |
 | `cypress-tests` | Writing Cypress tests against the full stack |
 | `stress-testing` | Load and stress testing with Artillery |
+| `caveman` | Terse answer style that cuts filler and keeps every technical fact |
 
 ## Project structure
 

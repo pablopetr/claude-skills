@@ -13,9 +13,12 @@ async function assertDirectory(projectDir) {
   }
 }
 
-export async function installCommand(options) {
+export async function installCommand(options, positional = []) {
   const available = await listSkills();
-  const skills = selectSkills(available, options);
+  const skills = selectSkills(available, {
+    ...options,
+    skills: options.skills ?? (positional.length > 0 ? positional.join(',') : undefined),
+  });
   const rawPath = typeof options.path === 'string' ? options.path : await promptPath();
   const projectDir = expandPath(rawPath);
 
