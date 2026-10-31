@@ -42,11 +42,25 @@ claude-skills install skills=best-practices,cypress-tests,e2e-tests --path=~/doc
 claude-skills install except=best-practices --path=~/documents/code/my-project
 ```
 
-- Without `--path`, the CLI asks for the project path.
+- Without `--path`, the current directory is used when it contains a `.claude` folder; otherwise the CLI asks for the project path.
 - Skill names given directly (`install caveman`) install only those skills; same as `skills=`.
 - Without names, `skills` or `except`, all skills are installed.
 - `skills` and `except` cannot be used together.
 - Skills that already exist in the project are skipped. Add `--force` to overwrite them.
+
+### `uninstall`
+
+Removes skills from `<project>/.claude/skills/`.
+
+```bash
+claude-skills uninstall react-best-practices
+claude-skills uninstall best-practices git-practices --path=~/documents/code/my-project
+```
+
+- At least one skill name is required.
+- Without `--path`, the current directory is used.
+- Only skills that exist in this repository can be removed; other skills in the project are never touched.
+- Names that are not installed are reported and ignored.
 
 ### `update`
 
@@ -81,7 +95,7 @@ Prints the usage summary.
 | --- | --- | --- |
 | `skills=<a,b>` | `install` | Install only the listed skills |
 | `except=<a,b>` | `install` | Install everything except the listed skills |
-| `--path=<dir>` | `install`, `update` | Target project. Supports `~`, `C:\...` and `/...` |
+| `--path=<dir>` | `install`, `uninstall`, `update` | Target project. Supports `~`, `C:\...` and `/...` |
 | `--force` | `install` | Overwrite skills that already exist |
 
 Both `skills=a,b` and `--skills=a,b` are accepted, as is `--path <dir>`. Quote paths that contain spaces.
@@ -107,7 +121,7 @@ Both `skills=a,b` and `--skills=a,b` are accepted, as is `--path <dir>`. Quote p
 ```
 bin/claude-skills.js     CLI entry point
 src/cli.js               Command routing
-src/commands/            install, update, list and help commands
+src/commands/            install, uninstall, update, list and help commands
 src/*.js                 Single-purpose helpers (argument parsing, path expansion, skill selection and copying)
 .claude/skills/<name>/   Skill sources, each with a SKILL.md
 ```

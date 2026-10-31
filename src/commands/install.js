@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises';
+import path from 'node:path';
 import { expandPath } from '../expand-path.js';
 import { listSkills } from '../list-skills.js';
 import { selectSkills } from '../select-skills.js';
@@ -13,13 +14,23 @@ async function assertDirectory(projectDir) {
   }
 }
 
+async function resolveProjectPath(options) {
+  if (typeof options.path === 'string') {
+    return options.path;
+  }
+
+  const claudeDir = await fs.stat(path.join(process.cwd(), '.claude')).catch(() => null);
+
+  return claudeDir?.isDirectory() ? process.cwd() : promptPath();
+}
+
 export async function installCommand(options, positional = []) {
   const available = await listSkills();
   const skills = selectSkills(available, {
     ...options,
     skills: options.skills ?? (positional.length > 0 ? positional.join(',') : undefined),
   });
-  const rawPath = typeof options.path === 'string' ? options.path : await promptPath();
+  const rawPath = await resolveProjectPath(options);
   const projectDir = expandPath(rawPath);
 
   await assertDirectory(projectDir);

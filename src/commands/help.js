@@ -5,6 +5,7 @@ Usage:
   claude-skills install <name> [name...]                  Installs only the named skills (e.g. caveman)
   claude-skills install skills=a,b --path=<dir>           Installs only the listed skills
   claude-skills install except=a,b --path=<dir>           Installs all skills except the listed ones
+  claude-skills uninstall <name> [name...] [--path=<dir>] Removes the named skills (defaults to current dir)
   claude-skills update [--path=<dir>]                     Refreshes installed skills from claude-skills (defaults to current dir)
   claude-skills list                                   Lists available skills
   claude-skills help                                      Shows this help

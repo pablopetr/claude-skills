@@ -1,11 +1,13 @@
 import { parseArgs } from './parse-args.js';
 import { installCommand } from './commands/install.js';
+import { uninstallCommand } from './commands/uninstall.js';
 import { updateCommand } from './commands/update.js';
 import { listCommand } from './commands/list.js';
 import { helpCommand } from './commands/help.js';
 
 const commands = {
   install: installCommand,
+  uninstall: uninstallCommand,
   update: updateCommand,
   list: listCommand,
   help: helpCommand,
